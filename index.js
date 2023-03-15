@@ -81,7 +81,19 @@ else{
 res.json({error: 'invalid url' });
 }
 })
-
+app.get('/api/shorturl/:id',(req,res)=>{
+  //search for the long url in db and redirect
+  let getId = req.params.id;
+  //console.log(getId)
+  Urlmodel.findOne({shortUrl:getId}, (err,doc)=>{
+    if(!doc) {
+      res.json({error: "No short URL found for the given input"})
+    }
+    else{
+    res.redirect(doc.longURL);
+    }
+  });
+  })
 
 
 
