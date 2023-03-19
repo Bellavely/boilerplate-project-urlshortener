@@ -37,15 +37,6 @@ app.get('/', function(req, res) {
 
 
 
-async function existUrl(urlfromreq) {
-  const doc = await Urlmodel.findOne({longURL:urlfromreq},(err,doc)=>{
-    if (err) return console.log(err);
-    done(null, doc);
-  });
-  return doc;
-}
-
-
 app.post('/api/shorturl',(req,res)=>{
   const pattern = new RegExp(
     '^(https?:\\/\\/)?' + // protocol
@@ -57,8 +48,7 @@ app.post('/api/shorturl',(req,res)=>{
     'i'
   );
   var urlfromreq= req.body.url;
-  console.log(urlfromreq);
-  //check if the url is valid
+  //check if the url is valid by regix
   if(pattern.test(urlfromreq)){
    Urlmodel.findOne({longURL:urlfromreq},(err,doc)=>{
     if (!doc)
@@ -68,7 +58,7 @@ app.post('/api/shorturl',(req,res)=>{
       var data=new Urlmodel({longURL: urlfromreq,shortUrl: urlId});
       data.save((err,myUrl)=>{
           if (err) return console.error(err);
-          console.log(myUrl + "saved to collection.");
+          //console.log(myUrl + "saved to collection.");
          })
          res.json({original_url: urlfromreq ,short_url:urlId});
     }
@@ -81,6 +71,7 @@ else{
 res.json({error: 'invalid url' });
 }
 })
+
 app.get('/api/shorturl/:id',(req,res)=>{
   //search for the long url in db and redirect
   let getId = req.params.id;
